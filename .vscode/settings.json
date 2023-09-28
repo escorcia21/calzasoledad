@@ -9,5 +9,7 @@
         "Scripts": true,
         "Lib": true,
         "pyvenv.cfg": true,
+        "include": true,
+        "**/__pycache__": true,
     }
 }

@@ -2,3 +2,7 @@
 Lib
 Scripts
 pyvenv.cfg
+include
+__pycache__
+.env
+.flaskenv
