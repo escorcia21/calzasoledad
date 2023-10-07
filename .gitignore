@@ -6,3 +6,5 @@ include
 __pycache__
 .env
 .flaskenv
+env/
+venv/
