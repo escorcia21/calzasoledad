@@ -3,8 +3,6 @@ from typing import List, Optional
 from models.RolesModel import Roles
 
 from repositories.RolesRepository import RolesRepository
-from schemas.RolesSchemas import CreateRoleSchema, UpdateRoleSchema
-
 
 class RolesService:
     rolesRepository: RolesRepository
@@ -14,20 +12,17 @@ class RolesService:
     ) -> None:
         self.rolesRepository = rolesRepository
 
-    def create(self, role_body: CreateRoleSchema) -> Roles:
+    def create(self, role_body) -> Roles:
         return self.rolesRepository.create(
-            Roles(userType=role_body.userType)
+            Roles(userType=role_body["userType"])
         )
 
     def delete(self, roleId: int) -> None:
-        return self.rolesRepository.delete(
-            Roles(roleId=roleId)
-        )
+        return self.rolesRepository.delete(roleId)
+
 
     def get(self, roleId: int) -> Roles:
-        return self.rolesRepository.get(
-            Roles(roleId=roleId)
-        )
+        return self.rolesRepository.get(roleId)
 
     def list(
         self,
@@ -40,8 +35,8 @@ class RolesService:
         )
 
     def update(
-        self, roleId: int, role_body: UpdateRoleSchema
+        self, role_body
     ) -> Roles:
         return self.rolesRepository.update(
-            roleId, Roles(userType=role_body.userType)
+            role_body["roleId"], Roles(userType=role_body["userType"])
         )
