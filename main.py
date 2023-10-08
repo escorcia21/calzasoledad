@@ -1,6 +1,6 @@
 from flask import Flask
 from routes.Api import bp as main_bp
-from routes.Calzado import bp as calzado_bp
+from routes.RolesRoute import bp as roles_bp
 from models.BaseModel import init
 from http.client import HTTPException
 from flask import jsonify
@@ -8,7 +8,7 @@ from flask import jsonify
 app = Flask(__name__)
 
 # Register blueprints here
-main_bp.register_blueprint(calzado_bp)
+main_bp.register_blueprint(roles_bp)
 app.register_blueprint(main_bp)
 
 # Initialize database
