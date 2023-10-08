@@ -31,9 +31,9 @@ def index(
         )
     ]
 
-@bp.route("/<str:userId>", methods=["GET"])
+@bp.route("/<int:userId>", methods=["GET"])
 def get(
-    userId: str
+    userId: int
 ):
     response = usersService.get(userId)
     return jsonify(response.__repr__())
