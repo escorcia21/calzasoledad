@@ -3,15 +3,14 @@ from flask import Blueprint, request, jsonify
 from services.RolesService import RolesService
 from schemas.RolesSchemas import CreateRoleSchema, UpdateRoleSchema
 
-
+rolesService: RolesService = RolesService()
 bp = Blueprint('roles', __name__, url_prefix='/roles')
 
 @bp.route("/", methods=['GET'])
 def index(
     name: Optional[str] = None,
     pageSize: Optional[int] = 100,
-    startIndex: Optional[int] = 0,
-    calzadoService: RolesService = RolesService()
+    startIndex: Optional[int] = 0
 ):
     reqName = request.args.get('name')
     if reqName:
@@ -27,40 +26,35 @@ def index(
 
     return [
         calzado.__repr__()
-        for calzado in calzadoService.list(
+        for calzado in rolesService.list(
             name, pageSize, startIndex
         )
     ]
 
 @bp.route("/<int:roleId>", methods=['GET'])
 def get(
-    roleId: int,
-    calzadoService: RolesService = RolesService()
+    roleId: int
 ):
-    response = calzadoService.get(roleId)
+    response = rolesService.get(roleId)
     return jsonify(response.__repr__())
 
 @bp.route("/", methods=['POST'])
-def create(
-    calzadoService: RolesService = RolesService()
-):
+def create():
     json_input = request.get_json()
     schema = CreateRoleSchema()
     obj = schema.load(json_input)
-    result = calzadoService.create(obj)
+    result = rolesService.create(obj)
     return {
         "message": "Role created",
         "role": result.__repr__()
     }
 
 @bp.route("/", methods=['PUT'])
-def update(
-    calzadoService: RolesService = RolesService()
-):
+def update():
     json_input = request.get_json()
     schema = UpdateRoleSchema()
     role_body = schema.load(json_input)
-    result = calzadoService.update(role_body)
+    result = rolesService.update(role_body)
     return jsonify({
         "message": "Role updated",
         "role": result.__repr__()
@@ -69,9 +63,8 @@ def update(
 @bp.route("/<int:roleId>", methods=['DELETE'])
 def delete(
     roleId: int,
-    calzadoService: RolesService = RolesService()
 ):
-    calzadoService.delete(roleId)
+    rolesService.delete(roleId)
     return jsonify({
         "message": "Role deleted"
     })
