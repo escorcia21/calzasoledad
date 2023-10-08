@@ -14,4 +14,7 @@ class Roles(Base):
         self.userType = userType
 
     def __repr__(self) -> str:
-        return f"Roles(roleId={self.roleId}, userType='{self.userType}')"
+        return {
+            "roleId": self.roleId,
+            "userType": self.userType,
+        }
