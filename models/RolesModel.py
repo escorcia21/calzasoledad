@@ -1,5 +1,5 @@
 from sqlalchemy import Integer, String
-from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import mapped_column, relationship
 from models.BaseModel import Base
 
 class Roles(Base):
@@ -8,7 +8,7 @@ class Roles(Base):
     roleId = mapped_column(Integer, primary_key=True)
     userType = mapped_column(String(255), nullable=False, unique=True)
 
-    #users = relationship("Users", back_populates="roles")
+    users = relationship("Users", back_populates="role")
 
     def __init__(self, userType):
         self.userType = userType
