@@ -25,12 +25,12 @@ class RolesRepository:
         if name:
             query = query.filter_by(userType=name)
 
-        return query.offset(start).limit(limit).all()
+        return query.offset(start).limit(limit)
     
-    def get(self, role: Roles) -> Roles:
+    def get(self, roleId: int) -> Roles:
         return self.db.get(
             Roles,
-            role.roleId
+            roleId
         )
 
     def create(self, role: Roles) -> Roles:
@@ -45,7 +45,6 @@ class RolesRepository:
         self.db.commit()
         return role
     
-    def delete(self, role: Roles) -> None:
-        self.db.delete(role)
+    def delete(self, roleId: int) -> None:
+        self.db.query(Roles).filter_by(roleId=roleId).delete()
         self.db.commit()
-        self.db.flush()
