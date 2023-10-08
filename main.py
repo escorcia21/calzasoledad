@@ -1,4 +1,5 @@
 from flask import Flask
+from marshmallow import ValidationError
 from routes.Api import bp as main_bp
 from routes.RolesRoute import bp as roles_bp
 from models.BaseModel import init
@@ -20,9 +21,12 @@ def hello_world():
 
 @app.errorhandler(Exception)
 def handle_error(e):
-    code = 500
 
     if isinstance(e, HTTPException):
         code = e.code
+    elif isinstance(e, ValidationError):
+        code = 422
+    else:
+        code = 500
         
     return jsonify(error=str(e)), code
