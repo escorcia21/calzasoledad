@@ -44,5 +44,3 @@ class UsersRepository:
         self.db.commit()
         return self.get(id)
     
-    def logIn(self, user_body: dict) -> Users:
-        return self.db.query(Users).filter_by(email=user_body["email"], userPassword=user_body["password"]).first()
