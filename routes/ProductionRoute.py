@@ -1,7 +1,7 @@
 from typing import Optional
 from flask import Blueprint, request, jsonify
 from services.ProductionService import ProductionService
-from schemas.productionSchemas import CreateProductionSchema, UpdateProductionSchema
+from schemas.productionSchemas import CreateProductionSchema, UpdateProductionSchema, ProductionByUserSchema
 
 bp = Blueprint("production", __name__, url_prefix="/production")
 productionService = ProductionService()
@@ -18,11 +18,13 @@ def list_production():
         for production in productionService.list(employeeId, pageSize, startIndex, date)
     ]
 
-@bp.route("/<int:productionId>", methods=["GET"])
-def get_production(productionId: int):
-    production = productionService.get(productionId)
-
-    return jsonify(production.__repr__())
+@bp.route("/<int:employeeId>", methods=["GET"])
+def get_production(employeeId: int):
+    ProductionByUserSchema().load(request.args.to_dict())
+    startProductionDate = request.args.get("startProductionDate")
+    endProductionDate = request.args.get("endProductionDate")
+    production = productionService.get(startProductionDate, endProductionDate, employeeId)
+    return jsonify(production)
 
 @bp.route("/", methods=["POST"])
 def create_production():

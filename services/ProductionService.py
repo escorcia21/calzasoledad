@@ -1,3 +1,4 @@
+from datetime import date
 from typing import List, Optional
 
 from models.ProductionModel import Production
@@ -27,8 +28,8 @@ class ProductionService:
             date,
         )
 
-    def get(self, productionId: int) -> Production:
-        return self.repository.get(productionId)
+    def get(self, startProductionDate: str, endProductionDate: str ,employeeId: int) -> Production:
+        return self.repository.get(startProductionDate, endProductionDate, employeeId)
 
     def create(self, production_body: dict) -> Production:
         return self.repository.create(
