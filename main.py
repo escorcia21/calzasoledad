@@ -8,8 +8,10 @@ from routes.ProductionRoute import bp as production_bp
 from models.BaseModel import init
 from http.client import HTTPException
 from flask import jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 # Register blueprints here
 main_bp.register_blueprint(roles_bp)
