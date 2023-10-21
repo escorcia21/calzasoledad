@@ -98,7 +98,7 @@ class ProductionRepository:
     def update(self, id: int, production_body: dict) -> Production:
         self.db.query(Production).filter_by(productionId=id).update(production_body)
         self.db.commit()
-        return self.get(id)
+        return self.db.query(Production).get(id)
     
     def packageCompensation(self, production):
 
