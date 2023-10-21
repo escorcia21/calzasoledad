@@ -90,15 +90,23 @@ class ProductionRepository:
         return  user_production_object
 
     def create(self, production: Production) -> Production:
-        self.db.add(production)
-        self.db.commit()
-        self.db.refresh(production)
-        return production
+        try:
+            self.db.add(production)
+            self.db.commit()
+            self.db.refresh(production)
+            return production
+        except:
+            self.db.rollback()
+            raise
     
     def update(self, id: int, production_body: dict) -> Production:
-        self.db.query(Production).filter_by(productionId=id).update(production_body)
-        self.db.commit()
-        return self.db.query(Production).get(id)
+        try:
+            self.db.query(Production).filter_by(productionId=id).update(production_body)
+            self.db.commit()
+            return self.db.query(Production).get(id)
+        except:
+            self.db.rollback()
+            raise
     
     def packageCompensation(self, production):
 

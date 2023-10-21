@@ -34,17 +34,29 @@ class RolesRepository:
         )
 
     def create(self, role: Roles) -> Roles:
-        self.db.add(role)
-        self.db.commit()
-        self.db.refresh(role)
-        return role
+        try:
+            self.db.add(role)
+            self.db.commit()
+            self.db.refresh(role)
+            return role
+        except:
+            self.db.rollback()
+            raise
 
     def update(self, id: int, role: Roles) -> Roles:
-        role.roleId = id
-        self.db.merge(role)
-        self.db.commit()
-        return role
+        try:
+            role.roleId = id
+            self.db.merge(role)
+            self.db.commit()
+            return role
+        except:
+            self.db.rollback()
+            raise
     
     def delete(self, roleId: int) -> None:
-        self.db.query(Roles).filter_by(roleId=roleId).delete()
-        self.db.commit()
+        try:
+            self.db.query(Roles).filter_by(roleId=roleId).delete()
+            self.db.commit()
+        except:
+            self.db.rollback()
+            raise

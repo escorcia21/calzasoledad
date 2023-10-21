@@ -34,13 +34,21 @@ class UsersRepository:
         )
 
     def create(self, user: Users) -> Users:
-        self.db.add(user)
-        self.db.commit()
-        self.db.refresh(user)
-        return user
+        try:
+            self.db.add(user)
+            self.db.commit()
+            self.db.refresh(user)
+            return user
+        except:
+            self.db.rollback()
+            raise
 
     def update(self, id: int, user_body: dict) -> Users:
-        self.db.query(Users).filter_by(cc=id).update(user_body)
-        self.db.commit()
-        return self.get(id)
+        try:
+            self.db.query(Users).filter_by(cc=id).update(user_body)
+            self.db.commit()
+            return self.get(id)
+        except:
+            self.db.rollback()
+            raise
     

@@ -34,12 +34,20 @@ class ProductsRepository:
         )
 
     def create(self, product: Products) -> Products:
-        self.db.add(product)
-        self.db.commit()
-        self.db.refresh(product)
-        return product
+        try:
+            self.db.add(product)
+            self.db.commit()
+            self.db.refresh(product)
+            return product
+        except:
+            self.db.rollback()
+            raise
 
     def update(self, id: int, product_body: dict) -> Products:
-        self.db.query(Products).filter_by(productId=id).update(product_body)
-        self.db.commit()
-        return self.get(id)
+        try:
+            self.db.query(Products).filter_by(productId=id).update(product_body)
+            self.db.commit()
+            return self.get(id)
+        except:
+            self.db.rollback()
+            raise
