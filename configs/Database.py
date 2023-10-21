@@ -22,5 +22,7 @@ def get_db_connection():
     db = scoped_session(SessionLocal)
     try:
         yield db
+    except:
+        db.rollback()
     finally:
         db.close()
