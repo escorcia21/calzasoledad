@@ -19,7 +19,7 @@ def before_request():
     if response['roleId'] != 10 and request.endpoint not in valid_endpoints_for_employee:
         raise Exception("Unauthorized")
 
-@bp.route("/", methods=["GET"])
+@bp.route("", methods=["GET"])
 def list_products():
     name = request.args.get("name")
     pageSize = request.args.get("pageSize")
@@ -36,7 +36,7 @@ def list_products():
         "total": len(data)
     }
 
-@bp.route("/<int:productId>", methods=["GET"])
+@bp.route("<int:productId>", methods=["GET"])
 def get_product(productId: int):
     product = productsService.get(productId)
 
@@ -45,7 +45,7 @@ def get_product(productId: int):
         "data": product.__repr__()
     }
 
-@bp.route("/", methods=["POST"])
+@bp.route("", methods=["POST"])
 def create_product():
     product_body = request.get_json()
 
@@ -58,7 +58,7 @@ def create_product():
         "data": product.__repr__()
     })
 
-@bp.route("/", methods=["PUT"])
+@bp.route("", methods=["PUT"])
 def update_product():
     product_body = request.get_json()
 

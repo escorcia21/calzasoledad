@@ -24,7 +24,7 @@ def before_request():
 
 productionService = ProductionService()
 
-@bp.route("/", methods=["GET"])
+@bp.route("", methods=["GET"])
 def list_production():
     employeeId = request.args.get("employeeId")
     pageSize = request.args.get("pageSize")
@@ -42,7 +42,7 @@ def list_production():
         "total": len(data)
     }
 
-@bp.route("/<int:employeeId>", methods=["GET"])
+@bp.route("<int:employeeId>", methods=["GET"])
 def get_production(employeeId: int):
     ProductionByUserSchema().load(request.args.to_dict())
     startProductionDate = request.args.get("startProductionDate")
@@ -50,7 +50,7 @@ def get_production(employeeId: int):
     production = productionService.get(startProductionDate, endProductionDate, employeeId)
     return jsonify(production)
 
-@bp.route("/", methods=["POST"])
+@bp.route("", methods=["POST"])
 def create_production():
     production_body = request.get_json()
 
@@ -63,7 +63,7 @@ def create_production():
         "data": production.__repr__()
     })
 
-@bp.route("/", methods=["PUT"])
+@bp.route("", methods=["PUT"])
 def update_production():
     production_body = request.get_json()
 

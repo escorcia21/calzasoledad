@@ -14,7 +14,7 @@ def before_request():
     if response['roleId'] != 10:
         raise Exception("Unauthorized")
 
-@bp.route("/", methods=['GET'])
+@bp.route("", methods=['GET'])
 def index(
     name: Optional[str] = None,
     pageSize: Optional[int] = 100,
@@ -45,7 +45,7 @@ def index(
         "total": len(data)
     }
 
-@bp.route("/<int:roleId>", methods=['GET'])
+@bp.route("<int:roleId>", methods=['GET'])
 def get(
     roleId: int
 ):
@@ -56,7 +56,7 @@ def get(
         "data": response.__repr__()
     }
 
-@bp.route("/", methods=['POST'])
+@bp.route("", methods=['POST'])
 def create():
     json_input = request.get_json()
     schema = CreateRoleSchema()
@@ -67,7 +67,7 @@ def create():
         "data": result.__repr__()
     }
 
-@bp.route("/", methods=['PUT'])
+@bp.route("", methods=['PUT'])
 def update():
     json_input = request.get_json()
     schema = UpdateRoleSchema()
@@ -78,7 +78,7 @@ def update():
         "data": result.__repr__()
     })
 
-@bp.route("/<int:roleId>", methods=['DELETE'])
+@bp.route("<int:roleId>", methods=['DELETE'])
 def delete(
     roleId: int,
 ):

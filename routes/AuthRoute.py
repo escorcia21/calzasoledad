@@ -7,7 +7,7 @@ bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 usersService = UsersService()
 
-@bp.route("/", methods=["POST"])
+@bp.route("", methods=["POST"])
 def login():
     json_input = request.get_json()
 
@@ -23,7 +23,7 @@ def login():
     else:
         return {"message": "Invalid credentials"}, 401
     
-@bp.route("/verify", methods=["POST"])
+@bp.route("verify", methods=["POST"])
 def verify():
     token = request.headers.get("Authorization").split(" ")[1]
     return validate_token(token, output=True)

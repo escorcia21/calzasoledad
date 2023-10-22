@@ -22,7 +22,7 @@ def before_request():
             if response["cc"] != str(request.view_args["userId"]):
                 raise Exception("Unauthorized")
 
-@bp.route("/", methods=["GET"])
+@bp.route("", methods=["GET"])
 def index(
     name: Optional[str] = None,
     pageSize: Optional[int] = 100,
@@ -53,7 +53,7 @@ def index(
         "total": len(data)
     }
 
-@bp.route("/<int:userId>", methods=["GET"])
+@bp.route("<int:userId>", methods=["GET"])
 def get(
     userId: int
 ):
@@ -63,7 +63,7 @@ def get(
         "data": response.__repr__()
     }
 
-@bp.route("/", methods=["POST"])
+@bp.route("", methods=["POST"])
 def create():
     json_input = request.get_json()
     schema = CreateUserSchema()
@@ -74,7 +74,7 @@ def create():
         "data": result.__repr__()
     }
 
-@bp.route("/", methods=["PUT"])
+@bp.route("", methods=["PUT"])
 def update():
     json_input = request.get_json()
     schema = UpdateUserSchema()
