@@ -2,9 +2,22 @@ from typing import Optional
 from flask import Blueprint, request, jsonify
 from services.ProductsService import ProductsService
 from schemas.ProductsSchemas import CreateProductSchema, UpdateProductSchema
+from auth.JwtUtils import validate_token
 
 bp = Blueprint("products", __name__, url_prefix="/products")
 productsService = ProductsService()
+
+@bp.before_request
+def before_request():
+    token = request.headers.get("Authorization").split(" ")[1]
+    response = validate_token(token, output=True)
+    valid_endpoints_for_employee = [
+        "main.products.list_products",
+        "main.products.get_product",
+    ]
+    
+    if response['roleId'] != 10 and request.endpoint not in valid_endpoints_for_employee:
+        raise Exception("Unauthorized")
 
 @bp.route("/", methods=["GET"])
 def list_products():

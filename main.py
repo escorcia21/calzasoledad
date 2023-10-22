@@ -5,6 +5,7 @@ from routes.RolesRoute import bp as roles_bp
 from routes.UsersRoute import bp as users_bp
 from routes.ProductsRoute import bp as products_bp
 from routes.ProductionRoute import bp as production_bp
+from routes.AuthRoute import bp as auth_bp
 from models.BaseModel import init
 from http.client import HTTPException
 from flask import jsonify
@@ -18,6 +19,7 @@ main_bp.register_blueprint(roles_bp)
 main_bp.register_blueprint(users_bp)
 main_bp.register_blueprint(products_bp)
 main_bp.register_blueprint(production_bp)
+main_bp.register_blueprint(auth_bp)
 app.register_blueprint(main_bp)
 
 # Initialize database

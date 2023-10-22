@@ -2,8 +2,23 @@ from typing import Optional
 from flask import Blueprint, request, jsonify
 from services.ProductionService import ProductionService
 from schemas.productionSchemas import CreateProductionSchema, UpdateProductionSchema, ProductionByUserSchema
+from auth.JwtUtils import validate_token
 
 bp = Blueprint("production", __name__, url_prefix="/production")
+
+@bp.before_request
+def before_request():
+    token = request.headers.get("Authorization").split(" ")[1]
+    response = validate_token(token, output=True)
+    valid_endpoints_for_employee = [
+        "main.production.get_production",
+    ]
+
+    if response['roleId'] != 10 and request.endpoint not in valid_endpoints_for_employee:
+        raise Exception("Unauthorized")
+    elif response["cc"] != str(request.view_args["employeeId"]):
+        raise Exception("Unauthorized")
+
 productionService = ProductionService()
 
 @bp.route("/", methods=["GET"])

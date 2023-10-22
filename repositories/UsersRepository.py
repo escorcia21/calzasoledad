@@ -51,4 +51,7 @@ class UsersRepository:
         except:
             self.db.rollback()
             raise
+
+    def login(self, cc: str, password: str) -> Users:
+        return self.db.query(Users).filter_by(cc=cc, password=password).first()
     

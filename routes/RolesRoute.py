@@ -2,9 +2,17 @@ from typing import Optional
 from flask import Blueprint, request, jsonify
 from services.RolesService import RolesService
 from schemas.RolesSchemas import CreateRoleSchema, UpdateRoleSchema
+from auth.JwtUtils import validate_token
 
 rolesService: RolesService = RolesService()
 bp = Blueprint('roles', __name__, url_prefix='/roles')
+
+@bp.before_request
+def before_request():
+    token = request.headers.get("Authorization").split(" ")[1]
+    response = validate_token(token, output=True)
+    if response['roleId'] != 10:
+        raise Exception("Unauthorized")
 
 @bp.route("/", methods=['GET'])
 def index(

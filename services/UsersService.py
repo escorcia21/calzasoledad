@@ -14,7 +14,7 @@ class UsersService:
 
     def create(self, user_body) -> Users:
         return self.usersRepository.create(
-            Users(cc=user_body["cc"], name=user_body["name"], lastName=user_body["lastName"], roleId=user_body["roleId"])
+            Users(cc=user_body["cc"], name=user_body["name"], lastName=user_body["lastName"], roleId=user_body["roleId"], password=user_body["password"])
         )
 
     def get(self, userId: str) -> Users:
@@ -36,4 +36,7 @@ class UsersService:
         return self.usersRepository.update(
             user_body["cc"], user_body
         )
+    
+    def login(self, user_body) -> Users:
+        return self.usersRepository.login(user_body["cc"], user_body["password"])
         

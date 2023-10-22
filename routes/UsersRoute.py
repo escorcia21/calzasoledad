@@ -2,9 +2,25 @@ from typing import Optional
 from flask import Blueprint, request, jsonify
 from services.UsersService import UsersService
 from schemas.UsersSchemas import CreateUserSchema, UpdateUserSchema
+from auth.JwtUtils import validate_token
 
 bp = Blueprint("users", __name__, url_prefix='/users')
 usersService: UsersService = UsersService()
+
+@bp.before_request
+def before_request():
+    token = request.headers.get("Authorization").split(" ")[1]
+    response = validate_token(token, output=True)
+    valid_endpoints_for_employee = [
+        "main.users.get",
+    ]
+    
+    if response['roleId'] != 10 and request.endpoint not in valid_endpoints_for_employee:
+        raise Exception("Unauthorized")
+    elif response["cc"] != str(request.view_args["userId"]):
+        print(response["cc"])
+        print(request.view_args["userId"])
+        raise Exception("Unauthorized")
 
 @bp.route("/", methods=["GET"])
 def index(
