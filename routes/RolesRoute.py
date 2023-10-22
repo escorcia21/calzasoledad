@@ -9,7 +9,7 @@ bp = Blueprint('roles', __name__, url_prefix='/roles')
 
 @bp.before_request
 def before_request():
-    token = request.headers.get("Authorization").split(" ")[1]
+    token = request.args.get("Authorization").split(" ")[1]
     response = validate_token(token, output=True)
     if response['roleId'] != 10:
         raise Exception("Unauthorized")

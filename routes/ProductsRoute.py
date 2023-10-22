@@ -9,7 +9,7 @@ productsService = ProductsService()
 
 @bp.before_request
 def before_request():
-    token = request.headers.get("Authorization").split(" ")[1]
+    token = request.args.get("Authorization").split(" ")[1]
     response = validate_token(token, output=True)
     valid_endpoints_for_employee = [
         "main.products.list_products",
