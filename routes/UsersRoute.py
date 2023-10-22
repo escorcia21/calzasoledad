@@ -24,12 +24,18 @@ def index(
     if reqStartIndex:
         startIndex = int(reqStartIndex)
 
-    return [
+    data = [
         user.__repr__()
         for user in usersService.list(
             name, pageSize, startIndex
         )
     ]
+
+    return {
+        "status": data is not None,
+        "data": data,
+        "total": len(data)
+    }
 
 @bp.route("/<int:userId>", methods=["GET"])
 def get(
@@ -45,8 +51,8 @@ def create():
     obj = schema.load(json_input)
     result = usersService.create(obj)
     return {
-        "message": "User created",
-        "user": result.__repr__()
+        "status": result is not None,
+        "data": result.__repr__()
     }
 
 @bp.route("/", methods=["PUT"])
@@ -56,7 +62,7 @@ def update():
     user_body = schema.load(json_input)
     result = usersService.update(user_body)
     return jsonify({
-        "message": "User updated",
-        "user": result.__repr__()
+        "status": result is not None,
+        "data": result.__repr__()
     })
 

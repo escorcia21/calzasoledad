@@ -13,10 +13,16 @@ def list_production():
     startIndex = request.args.get("startIndex")
     date = request.args.get("date")
 
-    return [
+    data = [
         production.__repr__()
         for production in productionService.list(employeeId, pageSize, startIndex, date)
     ]
+
+    return {
+        "status": data is not None,
+        "data": data,
+        "total": len(data)
+    }
 
 @bp.route("/<int:employeeId>", methods=["GET"])
 def get_production(employeeId: int):
@@ -35,8 +41,8 @@ def create_production():
     production = productionService.create(obj)
 
     return jsonify({
-        "message": "production created",
-        "production": production.__repr__()
+        "status": production is not None,
+        "data": production.__repr__()
     })
 
 @bp.route("/", methods=["PUT"])
@@ -48,6 +54,6 @@ def update_production():
     production = productionService.update(obj)
 
     return jsonify({
-        "message": "production updated",
-        "production": production.__repr__()
+        "status": production is not None,
+        "data": production.__repr__()
     })

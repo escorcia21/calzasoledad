@@ -24,12 +24,18 @@ def index(
     if reqStartIndex:
         startIndex = int(reqStartIndex)
 
-    return [
+    data = [
         calzado.__repr__()
         for calzado in rolesService.list(
             name, pageSize, startIndex
         )
     ]
+
+    return {
+        "status": data is not None,
+        "data": data,
+        "total": len(data)
+    }
 
 @bp.route("/<int:roleId>", methods=['GET'])
 def get(
@@ -45,8 +51,8 @@ def create():
     obj = schema.load(json_input)
     result = rolesService.create(obj)
     return {
-        "message": "Role created",
-        "role": result.__repr__()
+        "status": result is not None,
+        "data": result.__repr__()
     }
 
 @bp.route("/", methods=['PUT'])
@@ -57,15 +63,16 @@ def update():
     result = rolesService.update(role_body)
     return jsonify({
         "message": "Role updated",
-        "role": result.__repr__()
+        "data": result.__repr__()
     })
 
 @bp.route("/<int:roleId>", methods=['DELETE'])
 def delete(
     roleId: int,
 ):
-    rolesService.delete(roleId)
+    result = rolesService.delete(roleId)
     return jsonify({
+        "status": result is not None,
         "message": "Role deleted"
     })
     

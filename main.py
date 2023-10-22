@@ -11,11 +11,7 @@ from flask import jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-cors = CORS(app, resource={
-    r"/*":{
-        "origins":"*"
-    }
-})
+CORS(app)
 
 # Register blueprints here
 main_bp.register_blueprint(roles_bp)
