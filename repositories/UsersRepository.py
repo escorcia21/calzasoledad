@@ -1,18 +1,9 @@
 from typing import List, Optional
 from models.UsersModel import Users
-from sqlalchemy.orm import Session
-from configs.Database import (
-    get_db_connection,
-)
+from configs.Database import Session as db
 
 
 class UsersRepository:
-    db: Session
-
-    def __init__(
-        self, db = next(get_db_connection())
-    ) -> None:
-        self.db = db
 
     def list(
         self,
@@ -20,38 +11,60 @@ class UsersRepository:
         limit: Optional[int],
         start: Optional[int],
     ) -> List[Users]:
-        query = self.db.query(Users)
+        try:
+            query = db.query(Users)
 
-        if name:
-            query = query.filter_by(name=name)
+            if name:
+                query = query.filter_by(name=name)
 
-        return query.offset(start).limit(limit)
+            return query.offset(start).limit(limit)
+        except:
+            db.rollback()
+            raise
+        finally:
+            db.remove()
     
     def get(self, userId: str) -> Users:
-        return self.db.get(
-            Users,
-            userId
-        )
+        try:
+            return db.get(
+                Users,
+                userId
+            )
+        except:
+            db.rollback()
+            raise
+        finally:
+            db.remove()
 
     def create(self, user: Users) -> Users:
         try:
-            self.db.add(user)
-            self.db.commit()
-            self.db.refresh(user)
+            db.add(user)
+            db.commit()
+            db.refresh(user)
             return user
         except:
-            self.db.rollback()
+            db.rollback()
             raise
+        finally:
+            db.remove()
 
     def update(self, id: int, user_body: dict) -> Users:
         try:
-            self.db.query(Users).filter_by(cc=id).update(user_body)
-            self.db.commit()
+            db.query(Users).filter_by(cc=id).update(user_body)
+            db.commit()
             return self.get(id)
         except:
-            self.db.rollback()
+            db.rollback()
             raise
+        finally:
+            db.remove()
 
     def login(self, cc: str, password: str) -> Users:
-        return self.db.query(Users).filter_by(cc=cc, password=password).first()
+        try:
+            return db.query(Users).filter_by(cc=cc, password=password).first()
+        except:
+            db.rollback()
+            raise
+        finally:
+            db.remove()
     

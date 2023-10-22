@@ -9,7 +9,7 @@ class Roles(Base):
     userType = mapped_column(String(255), nullable=False, unique=True)
 
     users = relationship("Users", back_populates="role")
-    products = relationship("Products", back_populates="belongsTo")
+    products = relationship("Products", back_populates="belongsTo", lazy='joined')
 
     def __init__(self, userType):
         self.userType = userType

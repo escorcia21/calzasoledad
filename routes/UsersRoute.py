@@ -15,12 +15,12 @@ def before_request():
         "main.users.get",
     ]
     
-    if response['roleId'] != 10 and request.endpoint not in valid_endpoints_for_employee:
-        raise Exception("Unauthorized")
-    elif response["cc"] != str(request.view_args["userId"]):
-        print(response["cc"])
-        print(request.view_args["userId"])
-        raise Exception("Unauthorized")
+    if response['roleId'] != 10: 
+        if request.endpoint not in valid_endpoints_for_employee:
+            raise Exception("Unauthorized")
+        if request.endpoint == "main.users.get":
+            if response["cc"] != str(request.view_args["userId"]):
+                raise Exception("Unauthorized")
 
 @bp.route("/", methods=["GET"])
 def index(
@@ -58,7 +58,10 @@ def get(
     userId: int
 ):
     response = usersService.get(userId)
-    return jsonify(response.__repr__())
+    return {
+        "status": response is not None,
+        "data": response.__repr__()
+    }
 
 @bp.route("/", methods=["POST"])
 def create():

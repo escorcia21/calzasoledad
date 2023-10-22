@@ -11,7 +11,7 @@ class Users(Base):
     roleId = mapped_column(Integer, ForeignKey('roles.roleId'))
     password = mapped_column(String(255), nullable=False)
 
-    role = relationship("Roles", back_populates="users")
+    role = relationship("Roles", back_populates="users", lazy='joined')
 
     def __init__(self, cc, name, lastName, roleId, password):
         self.cc = cc

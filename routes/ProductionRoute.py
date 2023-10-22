@@ -14,10 +14,13 @@ def before_request():
         "main.production.get_production",
     ]
 
-    if response['roleId'] != 10 and request.endpoint not in valid_endpoints_for_employee:
-        raise Exception("Unauthorized")
-    elif response["cc"] != str(request.view_args["employeeId"]):
-        raise Exception("Unauthorized")
+    if response['roleId'] != 10:
+        if request.endpoint not in valid_endpoints_for_employee:
+            raise Exception("Unauthorized")
+        
+        if request.endpoint == "main.production.get_production":
+            if response["cc"] != str(request.view_args["employeeId"]):
+                raise Exception("Unauthorized")
 
 productionService = ProductionService()
 

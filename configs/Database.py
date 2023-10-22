@@ -18,9 +18,4 @@ SessionLocal = sessionmaker(
     autocommit=False, autoflush=False, bind=Engine
 )
 
-def get_db_connection():
-    db = scoped_session(SessionLocal)
-    try:
-        yield db
-    finally:
-        db.close()
+Session = scoped_session(SessionLocal)

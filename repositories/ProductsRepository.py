@@ -1,18 +1,9 @@
 from typing import List, Optional
 from models.ProductsModel import Products
-from sqlalchemy.orm import Session
-from configs.Database import (
-    get_db_connection,
-)
+from configs.Database import Session as db
 
 
 class ProductsRepository:
-    db: Session
-
-    def __init__(
-        self, db = next(get_db_connection())
-    ) -> None:
-        self.db = db
 
     def list(
         self,
@@ -20,34 +11,50 @@ class ProductsRepository:
         limit: Optional[int],
         start: Optional[int],
     ) -> List[Products]:
-        query = self.db.query(Products)
+        try:
+            query = db.query(Products)
 
-        if name:
-            query = query.filter_by(productName=name)
+            if name:
+                query = query.filter_by(productName=name)
 
-        return query.offset(start).limit(limit).all()
+            return query.offset(start).limit(limit)
+        except:
+            db.rollback()
+            raise
+        finally:
+            db.remove()
     
     def get(self, productId: int) -> Products:
-        return self.db.get(
-            Products,
-            productId
-        )
+        try:
+            return db.get(
+                Products,
+                productId
+            )
+        except:
+            db.rollback()
+            raise
+        finally:
+            db.remove()
 
     def create(self, product: Products) -> Products:
         try:
-            self.db.add(product)
-            self.db.commit()
-            self.db.refresh(product)
+            db.add(product)
+            db.commit()
+            db.refresh(product)
             return product
         except:
-            self.db.rollback()
+            db.rollback()
             raise
+        finally:
+            db.remove()
 
     def update(self, id: int, product_body: dict) -> Products:
         try:
-            self.db.query(Products).filter_by(productId=id).update(product_body)
-            self.db.commit()
+            db.query(Products).filter_by(productId=id).update(product_body)
+            db.commit()
             return self.get(id)
         except:
-            self.db.rollback()
+            db.rollback()
             raise
+        finally:
+            db.remove()

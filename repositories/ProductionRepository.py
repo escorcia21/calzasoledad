@@ -2,19 +2,11 @@ from typing import List, Optional
 from models.ProductionModel import Production
 from schemas.productionSchemas import ProductionSchema
 from sqlalchemy import text
-from sqlalchemy.orm import Session
-from configs.Database import (
-    get_db_connection,
-)
+from configs.Database import Session as db
+
 
 
 class ProductionRepository:
-    db: Session
-
-    def __init__(
-        self, db = next(get_db_connection())
-    ) -> None:
-        self.db = db
 
     def list(
         self,
@@ -23,12 +15,18 @@ class ProductionRepository:
         start: Optional[int],
         date: str,
     ) -> List[Production]:
-        query = self.db.query(Production)
+        try:
+            query = db.query(Production)
 
-        if employeeId:
-            query = query.filter_by(employeeId=employeeId, productionDate=date)
+            if employeeId:
+                query = query.filter_by(employeeId=employeeId, productionDate=date)
 
-        return query.offset(start).limit(limit)
+            return query.offset(start).limit(limit)
+        except:
+            db.rollback()
+            raise
+        finally:
+            db.remove()
     
     def get(self, startProductionDate: str , endProductionDate: str ,employeeId: int) -> Production:
 
@@ -52,11 +50,17 @@ class ProductionRepository:
 
         user_production_object = {}
         response = []
-        result = self.db.execute(query, {
-            'employeeId': employeeId, 
-            'startProductionDate': startProductionDate,
-            'endProductionDate': endProductionDate
-        })
+        try:
+            result = db.execute(query, {
+                'employeeId': employeeId, 
+                'startProductionDate': startProductionDate,
+                'endProductionDate': endProductionDate
+            })
+        except:
+            db.rollback()
+            raise
+        finally:
+            db.remove()
 
         scheme = ProductionSchema(many=True)
         mapped_result = scheme.dump(result)
@@ -91,22 +95,26 @@ class ProductionRepository:
 
     def create(self, production: Production) -> Production:
         try:
-            self.db.add(production)
-            self.db.commit()
-            self.db.refresh(production)
+            db.add(production)
+            db.commit()
+            db.refresh(production)
             return production
         except:
-            self.db.rollback()
+            db.rollback()
             raise
+        finally:
+            db.remove()
     
     def update(self, id: int, production_body: dict) -> Production:
         try:
-            self.db.query(Production).filter_by(productionId=id).update(production_body)
-            self.db.commit()
-            return self.db.query(Production).get(id)
+            db.query(Production).filter_by(productionId=id).update(production_body)
+            db.commit()
+            return db.query(Production).get(id)
         except:
-            self.db.rollback()
+            db.rollback()
             raise
+        finally:
+            db.remove()
     
     def packageCompensation(self, production):
 

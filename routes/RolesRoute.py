@@ -50,7 +50,11 @@ def get(
     roleId: int
 ):
     response = rolesService.get(roleId)
-    return jsonify(response.__repr__())
+
+    return {
+        "status": response is not None,
+        "data": response.__repr__()
+    }
 
 @bp.route("/", methods=['POST'])
 def create():
@@ -70,7 +74,7 @@ def update():
     role_body = schema.load(json_input)
     result = rolesService.update(role_body)
     return jsonify({
-        "message": "Role updated",
+        "status": result is not None,
         "data": result.__repr__()
     })
 

@@ -12,7 +12,7 @@ class Products(Base):
     packagesCompensation = mapped_column(Float, nullable=False)
     productRoleId = mapped_column(Integer, ForeignKey('roles.roleId'), nullable=False)
 
-    belongsTo = relationship("Roles", back_populates="products")
+    belongsTo = relationship("Roles", back_populates="products", lazy='joined')
 
     def __init__(self, productName, price, unitCompensation, packagesCompensation, productRoleId):
         self.productName = productName
