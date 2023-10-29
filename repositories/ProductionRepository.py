@@ -28,7 +28,7 @@ class ProductionRepository:
         finally:
             db.remove()
     
-    def get(self, startProductionDate: str , endProductionDate: str ,employeeId: int) -> Production:
+    def get(self, startProductionDate: str = None, endProductionDate: str = None,employeeId: int = None) -> Production:
 
         query = text("""
             SELECT 
@@ -44,6 +44,23 @@ class ProductionRepository:
             JOIN users ON users.cc = production.employeeId 
             WHERE users.cc = :employeeId AND
             (production.productionDate BETWEEN :startProductionDate AND :endProductionDate)
+            GROUP BY users.name, users.lastName, production.productionDate, products.productName, products.productId
+            ORDER BY production.productionDate ASC
+        """)
+
+        if not startProductionDate or not endProductionDate or not employeeId:
+            query = text("""
+            SELECT 
+                SUM(production.amount) AS totalAmount, 
+                concat(users.name, ' ', users.lastName) AS name,
+                production.productionDate,
+                products.productName,
+                products.unitCompensation,
+                products.packagesCompensation, 
+                products.price 
+            FROM production 
+            JOIN products ON products.productId = production.productId 
+            JOIN users ON users.cc = production.employeeId
             GROUP BY users.name, users.lastName, production.productionDate, products.productName, products.productId
             ORDER BY production.productionDate ASC
         """)

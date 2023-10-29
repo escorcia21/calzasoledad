@@ -9,6 +9,7 @@ class CreateProductionSchema(Schema):
 class ProductionByUserSchema(Schema):
     startProductionDate = fields.Date(required=True)
     endProductionDate = fields.Date(required=True)
+    Authorization = fields.Str(required=True)
 
 
 class UpdateProductionSchema(Schema):

@@ -14,19 +14,8 @@ class ProductionService:
     ) -> None:
         self.repository = repository
 
-    def list(
-        self,
-        employeeId: Optional[int],
-        limit: Optional[int],
-        start: Optional[int],
-        date: str,
-    ) -> List[Production]:
-        return self.repository.list(
-            employeeId,
-            limit,
-            start,
-            date,
-        )
+    def list(self) -> List[Production]:
+        return self.repository.get()
 
     def get(self, startProductionDate: str, endProductionDate: str ,employeeId: int) -> Production:
         return self.repository.get(startProductionDate, endProductionDate, employeeId)

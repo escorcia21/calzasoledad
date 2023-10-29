@@ -26,15 +26,8 @@ productionService = ProductionService()
 
 @bp.route("", methods=["GET"])
 def list_production():
-    employeeId = request.args.get("employeeId")
-    pageSize = request.args.get("pageSize")
-    startIndex = request.args.get("startIndex")
-    date = request.args.get("date")
 
-    data = [
-        production.__repr__()
-        for production in productionService.list(employeeId, pageSize, startIndex, date)
-    ]
+    data = productionService.list()
 
     return {
         "status": data is not None,
