@@ -28,7 +28,7 @@ class ProductionRepository:
         finally:
             db.remove()
     
-    def get(self, startProductionDate: str = None, endProductionDate: str = None,employeeId: int = None) -> Production:
+    def get(self, startProductionDate: str = None, endProductionDate: str = None,employeeId: int = None, productionId: int = None) -> Production:
 
         query = text("""
             SELECT 
@@ -64,15 +64,36 @@ class ProductionRepository:
             GROUP BY users.name, users.lastName, production.productionDate, products.productName, products.productId
             ORDER BY production.productionDate ASC
         """)
+            
+        if productionId:
+            query = text("""
+            SELECT 
+                SUM(production.amount) AS totalAmount, 
+                concat(users.name, ' ', users.lastName) AS name,
+                production.productionDate,
+                products.productName,
+                products.unitCompensation,
+                products.packagesCompensation, 
+                products.price 
+            FROM production 
+            JOIN products ON products.productId = production.productId 
+            JOIN users ON users.cc = production.employeeId 
+            WHERE production.productionId = :productionId
+            GROUP BY users.name, users.lastName, production.productionDate, products.productName, products.productId
+            ORDER BY production.productionDate ASC
+        """)
 
         user_production_object = {}
         response = []
         try:
-            result = db.execute(query, {
-                'employeeId': employeeId, 
-                'startProductionDate': startProductionDate,
-                'endProductionDate': endProductionDate
-            })
+            if productionId:
+                result = db.execute(query, {'productionId': productionId})
+            else:
+                result = db.execute(query, {
+                    'employeeId': employeeId, 
+                    'startProductionDate': startProductionDate,
+                    'endProductionDate': endProductionDate
+                })
         except:
             db.rollback()
             raise
@@ -108,14 +129,15 @@ class ProductionRepository:
             user_production_object['production'] = response
             user_production_object['totalCompensation'] = sum([x['compensation'] for x in response])
 
-        return  user_production_object
+        return  user_production_object        
 
     def create(self, production: Production) -> Production:
         try:
             db.add(production)
+            db.flush()
             db.commit()
             db.refresh(production)
-            return production
+            return self.get(productionId=production.productionId)
         except:
             db.rollback()
             raise

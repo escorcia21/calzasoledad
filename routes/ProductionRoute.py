@@ -53,7 +53,7 @@ def create_production():
 
     return jsonify({
         "status": production is not None,
-        "data": production.__repr__()
+        "data": production
     })
 
 @bp.route("", methods=["PUT"])
